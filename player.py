@@ -41,7 +41,7 @@ class Player(pygame.sprite.Sprite):
         x_coord = coords[0]
         y_coord =coords[1]-15
 
-        self.lasers.add(Laser((x_coord, y_coord),5))
+        self.lasers.add(Laser((x_coord, y_coord),5,self.rect.bottom))
         print('shoot')
 
     def update(self):
