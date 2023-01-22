@@ -34,17 +34,14 @@ class Player(pygame.sprite.Sprite):
             time = pygame.time.get_ticks()
             if time - self.laser_time >=self.cooldown:
                 self.laser_time = 0
-                self.can_shoot = True           
-
-
+                self.can_shoot = True
+                
     def shoot_laser(self):
         coords = self.rect.center
         x_coord = coords[0]
         y_coord =coords[1]-15
-
         self.lasers.add(Laser((x_coord, y_coord),5,self.rect.bottom))
-        print('shoot')
-
+        
     def update(self):
         self.get_input()        
         self.recharge()               

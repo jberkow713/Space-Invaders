@@ -38,7 +38,6 @@ class Game:
         self.y_space = 10
         self.x_alien_buffer = self.calc_buffer()
         self.alien_speed = 1
-
         self.alien_Lasers = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         self.alien_setup(self.alien_rows,self.alien_cols)
@@ -92,14 +91,11 @@ class Game:
         self.player.draw(screen)
         self.blocks.draw(screen)
         self.aliens.update(self.alien_speed)
-        self.change_dir(16)  
-        
+        self.change_dir(16)        
         self.aliens.draw(screen)
         self.alien_shoot()
         self.alien_Lasers.update() 
-        self.alien_Lasers.draw(screen)
-              
-            
+        self.alien_Lasers.draw(screen)      
         
 
 G = Game()

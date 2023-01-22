@@ -4,12 +4,7 @@ class Alien(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load(f'{color}.png')
         self.rect = self.image.get_rect(topleft=(x,y))
-        
-        self.WIDTH=WIDTH
-    def move_down(self,y):
-        self.y +=y     
-            
+        self.WIDTH=WIDTH                
     def update(self,speed):
-                
         self.rect.x += speed
        
