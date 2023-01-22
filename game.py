@@ -65,7 +65,7 @@ class Game:
         self.alien_laser.set_volume(0.13)           
         self.explosion = pygame.mixer.Sound('explosion.wav')
         self.explosion.set_volume(0.35)
-
+        # TODO level increment, bosses, starting screen
 
     def calc_buffer(self):
         return (WIDTH - ((self.alien_size+self.x_space)*self.alien_cols))/2
@@ -103,7 +103,6 @@ class Game:
             side = ['right', 'left']
             self.extra.add(Extra(choice(side),WIDTH))
             self.extra_timer = randint(400,800)
-
 
     def create_obstacle(self,x_start,y_start,offset_x):
         for row_index, row in enumerate(self.shape):
