@@ -35,6 +35,7 @@ class Game:
         self.x_space = 10
         self.y_space = 10
         self.x_alien_buffer = self.calc_buffer()
+        self.alien_speed = 1
 
         self.aliens = pygame.sprite.Group()
         self.alien_setup(self.alien_rows,self.alien_cols)
@@ -48,10 +49,18 @@ class Game:
             for col_idx,col in enumerate(range(cols)):
                 x = col_idx * self.alien_size + self.x_alien_buffer + col* self.x_space
                 y = row_idx * self.alien_size + row*self.y_space
-                alien_sprite = Alien(colors[row_idx%len(colors)],x,y)
+                alien_sprite = Alien(colors[row_idx%len(colors)],x,y,\
+                    WIDTH)
                 self.aliens.add(alien_sprite)
-
-
+    def change_dir(self,distance):
+        for alien in self.aliens:
+            if alien.rect.right>=WIDTH or alien.rect.left <= 0:
+                self.alien_speed *=-1
+                # if aliens remain
+                if self.aliens:
+                    for alien in self.aliens.sprites():
+                        alien.rect.y +=distance
+                return
     def create_obstacle(self,x_start,y_start,offset_x):
         for row_index, row in enumerate(self.shape):
             for col_index, val in enumerate(row):
@@ -60,18 +69,19 @@ class Game:
                     y = row_index *self.block_size + y_start
                     block = obstacle.Block(self.block_size,Block_Color,x,y)
                     self.blocks.add(block) 
+    
     def create_multiple_obstacles(self, x_start,y_start, *offset):
         for offset_x in offset:
             self.create_obstacle(x_start,y_start,offset_x)
-
 
     def run(self):
         self.player.update()
         self.player.sprite.lasers.draw(screen)
         self.player.draw(screen)
         self.blocks.draw(screen)
-        self.aliens.draw(screen)
-        # update and draw sprite groups
+        self.aliens.update(self.alien_speed)
+        self.change_dir(16)        
+        self.aliens.draw(screen)       
         
 
 G = Game()
