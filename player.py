@@ -1,5 +1,6 @@
 import pygame
-from laser import Laser 
+from laser import Laser
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self,pos,width,speed):

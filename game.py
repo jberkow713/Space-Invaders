@@ -3,6 +3,7 @@ from sys import exit
 import copy
 from player import  *
 import obstacle
+from Alien import Alien
 
 pygame.init()
 # Globals
@@ -22,8 +23,35 @@ class Game:
         self.shape = obstacle.shape
         self.block_size = 6
         self.blocks = pygame.sprite.Group()
-        
-        self.create_multiple_obstacles(WIDTH*.15,WIDTH*.8,0,WIDTH*.33, WIDTH*.66)
+        self.obstacle_amount = 8
+        self.obstacles = [x*(WIDTH/self.obstacle_amount) for x in range(self.obstacle_amount)]
+        # calculate evening spacing buffer
+        self.range =self.obstacles[-1]-self.obstacles[0]
+        self.buffer = (WIDTH - self.range) / 2
+        self.create_multiple_obstacles(self.buffer-30,WIDTH*.8,*self.obstacles)
+        self.alien_rows = 6
+        self.alien_cols = 12
+        self.alien_size = 40
+        self.x_space = 10
+        self.y_space = 10
+        self.x_alien_buffer = self.calc_buffer()
+
+        self.aliens = pygame.sprite.Group()
+        self.alien_setup(self.alien_rows,self.alien_cols)
+    
+    def calc_buffer(self):
+        return (WIDTH - ((self.alien_size+self.x_space)*self.alien_cols))/2
+
+    def alien_setup(self,rows,cols):
+        colors = ['red', 'yellow', 'green']
+        for row_idx,row in enumerate(range(rows)):
+            for col_idx,col in enumerate(range(cols)):
+                x = col_idx * self.alien_size + self.x_alien_buffer + col* self.x_space
+                y = row_idx * self.alien_size + row*self.y_space
+                alien_sprite = Alien(colors[row_idx%len(colors)],x,y)
+                self.aliens.add(alien_sprite)
+
+
     def create_obstacle(self,x_start,y_start,offset_x):
         for row_index, row in enumerate(self.shape):
             for col_index, val in enumerate(row):
@@ -42,6 +70,7 @@ class Game:
         self.player.sprite.lasers.draw(screen)
         self.player.draw(screen)
         self.blocks.draw(screen)
+        self.aliens.draw(screen)
         # update and draw sprite groups
         
 
