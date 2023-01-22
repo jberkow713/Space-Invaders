@@ -1,9 +1,11 @@
 import pygame
 from sys import exit
-import copy
+import random
+from random import choice
 from player import  *
 import obstacle
 from Alien import Alien
+from laser import Laser
 
 pygame.init()
 # Globals
@@ -37,6 +39,7 @@ class Game:
         self.x_alien_buffer = self.calc_buffer()
         self.alien_speed = 1
 
+        self.alien_Lasers = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         self.alien_setup(self.alien_rows,self.alien_cols)
     
@@ -61,6 +64,15 @@ class Game:
                     for alien in self.aliens.sprites():
                         alien.rect.y +=distance
                 return
+
+    def alien_shoot(self):
+        if random.randint(0,100)>97:
+
+            if self.aliens.sprites():
+                rand = choice(self.aliens.sprites())
+                laser = Laser(rand.rect.center,-3,HEIGHT)
+                self.alien_Lasers.add(laser)
+
     def create_obstacle(self,x_start,y_start,offset_x):
         for row_index, row in enumerate(self.shape):
             for col_index, val in enumerate(row):
@@ -80,8 +92,14 @@ class Game:
         self.player.draw(screen)
         self.blocks.draw(screen)
         self.aliens.update(self.alien_speed)
-        self.change_dir(16)        
-        self.aliens.draw(screen)       
+        self.change_dir(16)  
+        
+        self.aliens.draw(screen)
+        self.alien_shoot()
+        self.alien_Lasers.update() 
+        self.alien_Lasers.draw(screen)
+              
+            
         
 
 G = Game()
