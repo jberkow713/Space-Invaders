@@ -1,6 +1,5 @@
 import pygame
 from sys import exit
-
 from random import choice,randint
 from player import  *
 import obstacle
@@ -44,6 +43,9 @@ class Game:
         self.alien_Lasers = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         self.alien_setup(self.alien_rows,self.alien_cols)
+
+        self.hit_count =0
+
         # Extra ship setup
         self.extra = pygame.sprite.GroupSingle()
         self.extra_timer = randint(40,80)
@@ -80,13 +82,15 @@ class Game:
 
     def alien_setup(self,rows,cols):
         colors = ['red', 'yellow', 'green']
+        
         for row_idx,row in enumerate(range(rows)):
             for col_idx,col in enumerate(range(cols)):
                 x = col_idx * self.alien_size + self.x_alien_buffer + col* self.x_space
                 y = row_idx * self.alien_size + row*self.y_space + self.y_buffer
                 alien_sprite = Alien(colors[row_idx%len(colors)],x,y,\
-                    WIDTH)
+                    WIDTH)                    
                 self.aliens.add(alien_sprite)
+
     def change_dir(self,distance):
         for alien in self.aliens:
             if alien.rect.right>=WIDTH or alien.rect.left <= 0:
@@ -130,11 +134,13 @@ class Game:
             for laser in self.player.sprite.lasers:
                 if pygame.sprite.spritecollide(laser,self.blocks,True):
                     laser.kill()
-                if pygame.sprite.spritecollide(laser,self.aliens,True):
+                
+                if pygame.sprite.spritecollide(laser,self.aliens, True):
+                                
                     self.score+=abs(self.alien_speed)
                     self.explosion.play()
                     laser.kill()
-                    
+                
                 if pygame.sprite.spritecollide(laser,self.extra,True):
                     self.score+=10*abs(self.alien_speed)
                     laser.kill()
