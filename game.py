@@ -20,8 +20,9 @@ pygame.display.set_caption('Space_Invaders')
 
 class Game:
     def __init__(self):
-        player_sprite = Player((WIDTH/2,HEIGHT),WIDTH,5)
-        self.player = pygame.sprite.GroupSingle(player_sprite)
+
+        self.player_sprite = Player((WIDTH/2,HEIGHT),WIDTH,5)
+        self.player = pygame.sprite.GroupSingle(self.player_sprite)
         self.shape = obstacle.shape
         self.block_size = 6
         self.blocks = pygame.sprite.Group()
@@ -32,8 +33,8 @@ class Game:
         self.buffer = (WIDTH - self.range) / 2
         self.create_multiple_obstacles(self.buffer-30,WIDTH*.8,*self.obstacles)
         # Alien setup
-        self.alien_rows = 6
-        self.alien_cols = 12
+        self.alien_rows = 4
+        self.alien_cols = 4
         self.alien_size = 40
         self.x_space = 10
         self.y_space = 10
@@ -48,9 +49,6 @@ class Game:
         self.extra_timer = randint(40,80)
         # lives display
         self.lives = 3
-        self.lives_surface = pygame.image.load('player.png').convert_alpha()
-        self.player_width = self.lives_surface.get_size()[0]        
-        self.lives_starting_x = WIDTH - (self.player_width*2) -30
         # score
         self.score = 0
         # font
@@ -66,6 +64,16 @@ class Game:
         self.explosion = pygame.mixer.Sound('explosion.wav')
         self.explosion.set_volume(0.35)
         # TODO level increment, bosses, starting screen
+    def level_up(self):
+        # Resets level with increased speed
+        self.blocks.empty()
+        self.alien_Lasers.empty()
+        self.extra.empty()
+        self.lives +=1        
+        self.create_multiple_obstacles(self.buffer-30,WIDTH*.8,*self.obstacles)
+        self.alien_setup(self.alien_rows,self.alien_cols)
+        curr = abs(self.alien_speed)
+        self.alien_speed = curr+1
 
     def calc_buffer(self):
         return (WIDTH - ((self.alien_size+self.x_space)*self.alien_cols))/2
@@ -123,11 +131,12 @@ class Game:
                 if pygame.sprite.spritecollide(laser,self.blocks,True):
                     laser.kill()
                 if pygame.sprite.spritecollide(laser,self.aliens,True):
-                    self.score+=1
+                    self.score+=abs(self.alien_speed)
                     self.explosion.play()
                     laser.kill()
+                    
                 if pygame.sprite.spritecollide(laser,self.extra,True):
-                    self.score+=10
+                    self.score+=10*abs(self.alien_speed)
                     laser.kill()
             # for extra in self.extra:    
         if self.alien_Lasers:
@@ -147,16 +156,23 @@ class Game:
                     print('game over')
                     exit()
     def display_lives(self):
-        for life in range(self.lives-1):
-            x = self.lives_starting_x + life * (self.player_width+10)            
-            screen.blit(self.lives_surface,(x,10))
+        life_surface = self.font.render(f'LIVES:{self.lives}',False,'green')
+        life_rect = life_surface.get_rect(center=(725, 25))        
+        screen.blit(life_surface, life_rect)
     
     def display_score(self):
-        score_surface = self.font.render(f'Score:{self.score}',False,'white')
+        score_surface = self.font.render(f'SCORE:{self.score}',False,'green')
         score_rect_1 = score_surface.get_rect(center=(75, 25))        
         screen.blit(score_surface, score_rect_1)
 
+        level_surface = self.font.render(f'LEVEL:{abs(self.alien_speed)}',False,'green')
+        level_rect = level_surface.get_rect(center=(WIDTH/2 , 25))        
+        screen.blit(level_surface, level_rect)
+
     def run(self):
+        if not self.aliens:
+            self.level_up()
+
         self.player.update()
         self.alien_Lasers.update()
         self.extra.update()
@@ -174,7 +190,7 @@ class Game:
         self.extra_alien_timer()       
         self.collision_checks()
         self.display_lives()
-        self.display_score()       
+        self.display_score()
 
 G = Game()
 
