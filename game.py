@@ -19,7 +19,6 @@ pygame.display.set_caption('Space_Invaders')
 
 class Game:
     def __init__(self):
-
         self.player_sprite = Player((WIDTH/2,HEIGHT),WIDTH,5)
         self.player = pygame.sprite.GroupSingle(self.player_sprite)
         self.shape = obstacle.shape
@@ -43,10 +42,8 @@ class Game:
         self.alien_Lasers = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         self.ALIEN_dict = {}
-        self.alien_setup(self.alien_rows,self.alien_cols)        
-
-        self.hit_count =0
-        
+        self.alien_setup(self.alien_rows,self.alien_cols)
+        self.hit_count =0        
         # Extra ship setup
         self.extra = pygame.sprite.GroupSingle()
         self.extra_timer = randint(40,80)
@@ -68,7 +65,7 @@ class Game:
         self.explosion.set_volume(0.35)
         # TODO level increment, bosses, starting screen
     def level_up(self):
-        # Resets level with increased speed
+        # Resets level with increased speed and occasional bosses
         self.ALIEN_dict = {}
         self.blocks.empty()
         self.alien_Lasers.empty()
@@ -78,8 +75,7 @@ class Game:
         if abs(self.alien_speed) %3!=0:
             self.alien_setup(self.alien_rows,self.alien_cols)
         elif abs(self.alien_speed)%3==0:
-            self.boss_setup()    
-        
+            self.boss_setup()        
         curr = abs(self.alien_speed)
         self.alien_speed = curr+1        
 
@@ -98,8 +94,9 @@ class Game:
                 self.ALIEN_dict[count]=alien_sprite
                 self.aliens.add(alien_sprite)
                 count +=1                
+    
     def boss_setup(self):
-        print('boss')
+        # Sets up bosses
         colors = ['red', 'green', 'yellow']
         alien_sprite = Alien(choice(colors),WIDTH/2,100,WIDTH,20,boss=True)
         self.ALIEN_dict[0]=alien_sprite
@@ -184,6 +181,7 @@ class Game:
                 if pygame.sprite.spritecollide(alien,self.player,True):                    
                     print('game over')
                     exit()
+
     def display_lives(self):
         life_surface = self.font.render(f'LIVES:{self.lives}',False,'green')
         life_rect = life_surface.get_rect(center=(725, 25))        
@@ -230,6 +228,5 @@ while True:
             exit()
     screen.fill(BG)
     G.run()
-
     pygame.display.update()
     clock.tick(60)             
