@@ -70,7 +70,7 @@ class Game:
         # TODO level increment, bosses, starting screen
     def level_up(self):
         # Resets level with increased speed
-        self.alien_dict = {}
+        self.ALIEN_dict = {}
         self.blocks.empty()
         self.alien_Lasers.empty()
         self.extra.empty()
