@@ -42,7 +42,9 @@ class Game:
         self.alien_speed = 1
         self.alien_Lasers = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
+        self.alien_dict = {}
         self.alien_setup(self.alien_rows,self.alien_cols)
+        
 
         self.hit_count =0
 
@@ -68,6 +70,7 @@ class Game:
         # TODO level increment, bosses, starting screen
     def level_up(self):
         # Resets level with increased speed
+        self.alien_dict = {}
         self.blocks.empty()
         self.alien_Lasers.empty()
         self.extra.empty()
@@ -82,14 +85,17 @@ class Game:
 
     def alien_setup(self,rows,cols):
         colors = ['red', 'yellow', 'green']
-        
+        count = 0
         for row_idx,row in enumerate(range(rows)):
             for col_idx,col in enumerate(range(cols)):
                 x = col_idx * self.alien_size + self.x_alien_buffer + col* self.x_space
                 y = row_idx * self.alien_size + row*self.y_space + self.y_buffer
                 alien_sprite = Alien(colors[row_idx%len(colors)],x,y,\
                     WIDTH)                    
+                self.alien_dict[count]=alien_sprite
                 self.aliens.add(alien_sprite)
+                count +=1
+                
 
     def change_dir(self,distance):
         for alien in self.aliens:
@@ -136,7 +142,7 @@ class Game:
                     laser.kill()
                 
                 if pygame.sprite.spritecollide(laser,self.aliens, True):
-                                
+                              
                     self.score+=abs(self.alien_speed)
                     self.explosion.play()
                     laser.kill()
