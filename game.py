@@ -78,8 +78,7 @@ class Game:
         self.create_multiple_obstacles(self.buffer-30,WIDTH*.8,*self.obstacles)
         self.alien_setup(self.alien_rows,self.alien_cols)
         curr = abs(self.alien_speed)
-        self.alien_speed = curr+1
-        
+        self.alien_speed = curr+1        
 
     def calc_buffer(self):
         return (WIDTH - ((self.alien_size+self.x_space)*self.alien_cols))/2
@@ -95,8 +94,7 @@ class Game:
                     WIDTH,2)                    
                 self.ALIEN_dict[count]=alien_sprite
                 self.aliens.add(alien_sprite)
-                count +=1
-                
+                count +=1                
 
     def change_dir(self,distance):
         for alien in self.aliens:
@@ -148,10 +146,9 @@ class Game:
                         ALIEN = alien.__dict__
                         laser_rect = laser.__dict__['rect']
                         alien_rect = ALIEN['rect']
-                        health = alien.__dict__['health']
                         if pygame.Rect.colliderect(laser_rect, alien_rect)==1:
                             ALIEN['health'] = ALIEN['health']-1
-                            if ALIEN['health']==0:
+                            if ALIEN['health']<=0:
                                 self.aliens.remove(self.ALIEN_dict[num])
                                 self.killed = num
 
