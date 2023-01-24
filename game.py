@@ -42,6 +42,7 @@ class Game:
         self.alien_Lasers = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         self.ALIEN_dict = {}
+        self.LASER_dict = {}
         self.alien_setup(self.alien_rows,self.alien_cols)
         self.hit_count =0        
         # Extra ship setup
@@ -67,6 +68,8 @@ class Game:
     def level_up(self):
         # Resets level with increased speed and occasional bosses
         self.ALIEN_dict = {}
+        self.LASER_dict = {}
+        self.player.laser_count = 0
         self.blocks.empty()
         self.alien_Lasers.empty()
         self.extra.empty()
@@ -116,7 +119,7 @@ class Game:
         if randint(0,300)>295:
             if self.aliens.sprites():
                 rand = choice(self.aliens.sprites())
-                laser = Laser(rand.rect.center,-3,HEIGHT)
+                laser = Laser(rand.rect.center,-3,HEIGHT,'white',1)
                 self.alien_Lasers.add(laser)
                 self.alien_laser.play()
                 
@@ -151,9 +154,10 @@ class Game:
                         
                         ALIEN = alien.__dict__
                         laser_rect = laser.__dict__['rect']
+                        laser_damage = laser.__dict__['damage']
                         alien_rect = ALIEN['rect']
                         if pygame.Rect.colliderect(laser_rect, alien_rect)==1:
-                            ALIEN['health'] = ALIEN['health']-1
+                            ALIEN['health'] = ALIEN['health']-laser_damage
                             
                             if ALIEN['health']<=0:
                                 self.aliens.remove(self.ALIEN_dict[num])

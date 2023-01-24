@@ -1,5 +1,6 @@
 import pygame
 from laser import Laser
+from random import choice
 
 
 class Player(pygame.sprite.Sprite):
@@ -12,9 +13,12 @@ class Player(pygame.sprite.Sprite):
         self.can_shoot = True
         self.laser_time = 0
         self.cooldown = 600
+        self.LASER_dict = {}
         self.lasers = pygame.sprite.Group()
         self.laser = pygame.mixer.Sound('audio_laser.wav')
         self.laser.set_volume(0.2)
+        self.laser_count = 0
+        self.Laser_Power = {'white':1,'blue':2,'green':3}
         
     def get_input(self):
         keys = pygame.key.get_pressed()
@@ -42,7 +46,14 @@ class Player(pygame.sprite.Sprite):
         coords = self.rect.center
         x_coord = coords[0]
         y_coord =coords[1]-15
-        self.lasers.add(Laser((x_coord, y_coord),5,self.rect.bottom))
+
+        colors = ['white', 'blue', 'green']
+        color = choice(colors)
+        damage = self.Laser_Power[color]
+
+        L = Laser((x_coord, y_coord),5,self.rect.bottom,color,damage)
+        self.lasers.add(L)
+        self.LASER_dict[self.laser_count]=L
         self.laser.play()
         
     def update(self):
