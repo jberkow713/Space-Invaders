@@ -1,10 +1,11 @@
 import pygame
 class Alien(pygame.sprite.Sprite):
-    def __init__(self,color,x,y,WIDTH):
+    def __init__(self,color,x,y,WIDTH,health):
         super().__init__()
         self.image = pygame.image.load(f'{color}.png').convert_alpha()
         self.rect = self.image.get_rect(topleft=(x,y))
-        self.WIDTH=WIDTH                
+        self.WIDTH=WIDTH
+        self.health = health
     def update(self,speed):
         self.rect.x += speed
 class Extra(pygame.sprite.Sprite):

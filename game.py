@@ -42,11 +42,11 @@ class Game:
         self.alien_speed = 1
         self.alien_Lasers = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
-        self.alien_dict = {}
-        self.alien_setup(self.alien_rows,self.alien_cols)
-        
+        self.ALIEN_dict = {}
+        self.alien_setup(self.alien_rows,self.alien_cols)        
 
         self.hit_count =0
+        self.killed = None
 
         # Extra ship setup
         self.extra = pygame.sprite.GroupSingle()
@@ -79,6 +79,7 @@ class Game:
         self.alien_setup(self.alien_rows,self.alien_cols)
         curr = abs(self.alien_speed)
         self.alien_speed = curr+1
+        
 
     def calc_buffer(self):
         return (WIDTH - ((self.alien_size+self.x_space)*self.alien_cols))/2
@@ -91,8 +92,8 @@ class Game:
                 x = col_idx * self.alien_size + self.x_alien_buffer + col* self.x_space
                 y = row_idx * self.alien_size + row*self.y_space + self.y_buffer
                 alien_sprite = Alien(colors[row_idx%len(colors)],x,y,\
-                    WIDTH)                    
-                self.alien_dict[count]=alien_sprite
+                    WIDTH,2)                    
+                self.ALIEN_dict[count]=alien_sprite
                 self.aliens.add(alien_sprite)
                 count +=1
                 
@@ -141,8 +142,19 @@ class Game:
                 if pygame.sprite.spritecollide(laser,self.blocks,True):
                     laser.kill()
                 
-                if pygame.sprite.spritecollide(laser,self.aliens, True):
-                              
+                if pygame.sprite.spritecollide(laser,self.aliens, False):
+                    
+                    for num,alien in self.ALIEN_dict.items():
+                        ALIEN = alien.__dict__
+                        laser_rect = laser.__dict__['rect']
+                        alien_rect = ALIEN['rect']
+                        health = alien.__dict__['health']
+                        if pygame.Rect.colliderect(laser_rect, alien_rect)==1:
+                            ALIEN['health'] = ALIEN['health']-1
+                            if ALIEN['health']==0:
+                                self.aliens.remove(self.ALIEN_dict[num])
+                                self.killed = num
+
                     self.score+=abs(self.alien_speed)
                     self.explosion.play()
                     laser.kill()
@@ -201,6 +213,8 @@ class Game:
         self.alien_shoot()
         self.extra_alien_timer()       
         self.collision_checks()
+        if self.killed in self.ALIEN_dict:
+            del self.ALIEN_dict[self.killed]
         self.display_lives()
         self.display_score()
 
