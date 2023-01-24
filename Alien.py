@@ -1,8 +1,11 @@
 import pygame
 class Alien(pygame.sprite.Sprite):
-    def __init__(self,color,x,y,WIDTH,health):
+    def __init__(self,color,x,y,WIDTH,health,boss=False):
         super().__init__()
-        self.image = pygame.image.load(f'{color}.png').convert_alpha()
+        self.image = pygame.image.load(f'{color}.png').convert_alpha()        
+        if boss==True:
+            self.image = pygame.transform.scale(self.image, (200,200))
+            
         self.rect = self.image.get_rect(topleft=(x,y))
         self.WIDTH=WIDTH
         self.health = health

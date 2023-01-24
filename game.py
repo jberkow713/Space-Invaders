@@ -32,8 +32,8 @@ class Game:
         self.buffer = (WIDTH - self.range) / 2
         self.create_multiple_obstacles(self.buffer-30,WIDTH*.8,*self.obstacles)
         # Alien setup
-        self.alien_rows = 4
-        self.alien_cols = 4
+        self.alien_rows = 1
+        self.alien_cols = 1
         self.alien_size = 40
         self.x_space = 10
         self.y_space = 10
@@ -46,8 +46,7 @@ class Game:
         self.alien_setup(self.alien_rows,self.alien_cols)        
 
         self.hit_count =0
-        self.killed = None
-
+        
         # Extra ship setup
         self.extra = pygame.sprite.GroupSingle()
         self.extra_timer = randint(40,80)
@@ -74,9 +73,13 @@ class Game:
         self.blocks.empty()
         self.alien_Lasers.empty()
         self.extra.empty()
-        self.lives +=1        
+        self.lives +=1
         self.create_multiple_obstacles(self.buffer-30,WIDTH*.8,*self.obstacles)
-        self.alien_setup(self.alien_rows,self.alien_cols)
+        if abs(self.alien_speed) %3!=0:
+            self.alien_setup(self.alien_rows,self.alien_cols)
+        elif abs(self.alien_speed)%3==0:
+            self.boss_setup()    
+        
         curr = abs(self.alien_speed)
         self.alien_speed = curr+1        
 
@@ -95,6 +98,12 @@ class Game:
                 self.ALIEN_dict[count]=alien_sprite
                 self.aliens.add(alien_sprite)
                 count +=1                
+    def boss_setup(self):
+        print('boss')
+        colors = ['red', 'green', 'yellow']
+        alien_sprite = Alien(choice(colors),WIDTH/2,100,WIDTH,20,boss=True)
+        self.ALIEN_dict[0]=alien_sprite
+        self.aliens.add(alien_sprite)        
 
     def change_dir(self,distance):
         for alien in self.aliens:
@@ -140,19 +149,18 @@ class Game:
                 if pygame.sprite.spritecollide(laser,self.blocks,True):
                     laser.kill()
                 
-                if pygame.sprite.spritecollide(laser,self.aliens, False):
-                    
+                if pygame.sprite.spritecollide(laser,self.aliens, False):                    
                     for num,alien in self.ALIEN_dict.items():
+                        
                         ALIEN = alien.__dict__
                         laser_rect = laser.__dict__['rect']
                         alien_rect = ALIEN['rect']
                         if pygame.Rect.colliderect(laser_rect, alien_rect)==1:
                             ALIEN['health'] = ALIEN['health']-1
+                            
                             if ALIEN['health']<=0:
                                 self.aliens.remove(self.ALIEN_dict[num])
-                                self.killed = num
-
-                    self.score+=abs(self.alien_speed)
+                                self.score+=abs(self.alien_speed)
                     self.explosion.play()
                     laser.kill()
                 
@@ -210,8 +218,6 @@ class Game:
         self.alien_shoot()
         self.extra_alien_timer()       
         self.collision_checks()
-        if self.killed in self.ALIEN_dict:
-            del self.ALIEN_dict[self.killed]
         self.display_lives()
         self.display_score()
 
