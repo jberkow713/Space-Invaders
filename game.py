@@ -31,8 +31,8 @@ class Game:
         self.buffer = (WIDTH - self.range) / 2
         self.create_multiple_obstacles(self.buffer-30,WIDTH*.8,*self.obstacles)
         # Alien setup
-        self.alien_rows = 1
-        self.alien_cols = 1
+        self.alien_rows = 4
+        self.alien_cols = 4
         self.alien_size = 40
         self.x_space = 10
         self.y_space = 10
@@ -43,13 +43,16 @@ class Game:
         self.aliens = pygame.sprite.Group()
         self.ALIEN_dict = {}
         self.LASER_dict = {}
-        self.alien_setup(self.alien_rows,self.alien_cols)
         self.hit_count =0        
-        # Extra ship setup
-        self.extra = pygame.sprite.GroupSingle()
-        self.extra_timer = randint(40,80)
+                
         # lives display
         self.lives = 3
+        self.alien_health = 2
+        self.boss_health = 0
+        self.a_laser_power=1
+        self.alien_setup(self.alien_rows,self.alien_cols)
+        self.extra = pygame.sprite.GroupSingle()
+        self.extra_timer = randint(40,80)
         # score
         self.score = 0
         # font
@@ -78,6 +81,8 @@ class Game:
         if abs(self.alien_speed) %3!=0:
             self.alien_setup(self.alien_rows,self.alien_cols)
         elif abs(self.alien_speed)%3==0:
+            self.alien_health +=2
+            self.boss_health+=20
             self.boss_setup()        
         curr = abs(self.alien_speed)
         self.alien_speed = curr+1        
@@ -93,7 +98,7 @@ class Game:
                 x = col_idx * self.alien_size + self.x_alien_buffer + col* self.x_space
                 y = row_idx * self.alien_size + row*self.y_space + self.y_buffer
                 alien_sprite = Alien(colors[row_idx%len(colors)],x,y,\
-                    WIDTH,2)                    
+                    WIDTH,self.alien_health)                    
                 self.ALIEN_dict[count]=alien_sprite
                 self.aliens.add(alien_sprite)
                 count +=1                
@@ -101,7 +106,7 @@ class Game:
     def boss_setup(self):
         # Sets up bosses
         colors = ['red', 'green', 'yellow']
-        alien_sprite = Alien(choice(colors),WIDTH/2,100,WIDTH,20,boss=True)
+        alien_sprite = Alien(choice(colors),WIDTH/2,100,WIDTH,self.boss_health,boss=True)
         self.ALIEN_dict[0]=alien_sprite
         self.aliens.add(alien_sprite)        
 
@@ -119,7 +124,7 @@ class Game:
         if randint(0,300)>295:
             if self.aliens.sprites():
                 rand = choice(self.aliens.sprites())
-                laser = Laser(rand.rect.center,-3,HEIGHT,'white',1)
+                laser = Laser(rand.rect.center,-3,HEIGHT,'white',self.a_laser_power)
                 self.alien_Lasers.add(laser)
                 self.alien_laser.play()
                 

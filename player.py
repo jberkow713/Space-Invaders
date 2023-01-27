@@ -47,7 +47,7 @@ class Player(pygame.sprite.Sprite):
         x_coord = coords[0]
         y_coord =coords[1]-15
 
-        colors = ['white', 'blue', 'green']
+        colors = ['white', 'blue', 'green']        
         color = choice(colors)
         damage = self.Laser_Power[color]
 

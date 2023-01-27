@@ -8,6 +8,7 @@ class Alien(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(x,y))
         self.WIDTH=WIDTH
         self.health = health
+        self.hit = False
     def update(self,speed):
         self.rect.x += speed
 class Extra(pygame.sprite.Sprite):
