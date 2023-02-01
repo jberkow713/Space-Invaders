@@ -43,8 +43,7 @@ class Game:
         self.aliens = pygame.sprite.Group()
         self.ALIEN_dict = {}
         self.LASER_dict = {}
-        self.hit_count =0        
-                
+        self.hit_count =0                
         # lives display
         self.lives = 3
         self.alien_health = 2
@@ -81,6 +80,7 @@ class Game:
         if abs(self.alien_speed) %3!=0:
             self.alien_setup(self.alien_rows,self.alien_cols)
         elif abs(self.alien_speed)%3==0:
+            self.a_laser_power+=1
             self.alien_health +=2
             self.boss_health+=20
             self.boss_setup()        
@@ -124,7 +124,14 @@ class Game:
         if randint(0,300)>295:
             if self.aliens.sprites():
                 rand = choice(self.aliens.sprites())
-                laser = Laser(rand.rect.center,-3,HEIGHT,'white',self.a_laser_power)
+                if self.a_laser_power>3:
+                    Power = self.a_laser_power
+                    Color='green'
+                else:
+                    Laser_Colors = {1:'white', 2:'blue', 3:'green'}
+                    Power = self.a_laser_power
+                    Color = Laser_Colors[Power]
+                laser = Laser(rand.rect.center,-3,HEIGHT,Color,Power)
                 self.alien_Lasers.add(laser)
                 self.alien_laser.play()
                 
@@ -178,10 +185,12 @@ class Game:
             for laser in self.alien_Lasers:
                 if pygame.sprite.spritecollide(laser,self.blocks,True):
                     laser.kill()
-                if pygame.sprite.spritecollide(laser,self.player,False):
+
+                if pygame.sprite.spritecollide(laser,self.player,False):                                        
+                    laser_damage = laser.__dict__['damage']
                     laser.kill()
-                    self.lives-=1
-                    if self.lives ==0:
+                    self.lives-=laser_damage
+                    if self.lives <=0:
                         print('game over')
                         exit()
         if self.aliens:
@@ -200,7 +209,6 @@ class Game:
         score_surface = self.font.render(f'SCORE:{self.score}',False,'green')
         score_rect_1 = score_surface.get_rect(center=(75, 25))        
         screen.blit(score_surface, score_rect_1)
-
         level_surface = self.font.render(f'LEVEL:{abs(self.alien_speed)}',False,'green')
         level_rect = level_surface.get_rect(center=(WIDTH/2 , 25))        
         screen.blit(level_surface, level_rect)
