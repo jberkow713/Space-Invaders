@@ -48,6 +48,7 @@ class Game:
         self.lives = 3
         self.alien_health = 2
         self.boss_health = 0
+        self.boss = False
         self.a_laser_power=1
         self.alien_setup(self.alien_rows,self.alien_cols)
         self.extra = pygame.sprite.GroupSingle()
@@ -75,10 +76,11 @@ class Game:
         self.blocks.empty()
         self.alien_Lasers.empty()
         self.extra.empty()
-        self.lives +=1
+        self.lives +=1        
         self.create_multiple_obstacles(self.buffer-30,WIDTH*.8,*self.obstacles)
         if abs(self.alien_speed) %3!=0:
             self.alien_setup(self.alien_rows,self.alien_cols)
+            self.boss = False
         elif abs(self.alien_speed)%3==0:
             self.a_laser_power+=1
             self.alien_health +=2
@@ -108,7 +110,8 @@ class Game:
         colors = ['red', 'green', 'yellow']
         alien_sprite = Alien(choice(colors),WIDTH/2,100,WIDTH,self.boss_health,boss=True)
         self.ALIEN_dict[0]=alien_sprite
-        self.aliens.add(alien_sprite)        
+        self.aliens.add(alien_sprite)
+        self.boss = True        
 
     def change_dir(self,distance):
         for alien in self.aliens:
@@ -131,7 +134,14 @@ class Game:
                     Laser_Colors = {1:'white', 2:'blue', 3:'green'}
                     Power = self.a_laser_power
                     Color = Laser_Colors[Power]
-                laser = Laser(rand.rect.center,-3,HEIGHT,Color,Power)
+                if self.boss==False:
+                    offset_x =offset_y= 25
+                elif self.boss==True:
+                    offset_x = 100
+                    offset_y = 200    
+                x = rand.__dict__['rect'][0]+offset_x
+                y = rand.__dict__['rect'][1]+offset_y   
+                laser = Laser((x,y),-3,HEIGHT,Color,Power)
                 self.alien_Lasers.add(laser)
                 self.alien_laser.play()
                 
